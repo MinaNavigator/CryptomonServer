@@ -1,0 +1,6 @@
+@CryptomonServer_HostAddress = http://localhost:5089
+
+GET {{CryptomonServer_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
