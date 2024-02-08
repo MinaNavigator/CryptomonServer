@@ -1,9 +1,16 @@
+using CryptomonServer.Orm;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Npgsql;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
+
+// Add services to the container.
+builder.Services.AddDbContext<CryptomonDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddMemoryCache();
@@ -36,6 +43,10 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
+builder.Services.AddAuthorization();
+builder.Services.AddCors();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,8 +56,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CryptomonDbContext>();
+    db.Database.Migrate();
+    db.Database.OpenConnection();
+    ((NpgsqlConnection)db.Database.GetDbConnection()).ReloadTypes();
+}
+
 app.UseHttpsRedirection();
 
+// global cors policy
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true) // allow any origin
+    .AllowCredentials()); // allow credentials
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
