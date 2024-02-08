@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace CryptomonServer.Orm
 {
     [Index(nameof(Address), IsUnique = true)]
+    [Index(nameof(Username), IsUnique = true)]
     public class Account
     {
         [Key]
