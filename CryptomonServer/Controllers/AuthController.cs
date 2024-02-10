@@ -1,4 +1,5 @@
 ﻿using CryptomonServer.Dtos;
+using CryptomonServer.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -7,6 +8,7 @@ using MinaSignerNet;
 using System.IdentityModel.Tokens.Jwt;
 using System.Numerics;
 using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 
 namespace CryptomonServer.Controllers
@@ -18,14 +20,16 @@ namespace CryptomonServer.Controllers
         private IConfiguration _config;
         private readonly IMemoryCache _cache;
         private readonly ILogger<AuthController> _logger;
+        private readonly IAccountService _accountService;
         private const string message = "Welcome to the mina asp auth, sign this message to authenticate {0}";
         private const string cacheConnectionKey = "GetConnection_{0}";
 
-        public AuthController(ILogger<AuthController> logger, IConfiguration config, IMemoryCache cache)
+        public AuthController(ILogger<AuthController> logger, IConfiguration config, IMemoryCache cache, IAccountService accountService)
         {
             _logger = logger;
             _config = config;
             _cache = cache;
+            _accountService = accountService;
         }
 
         [AllowAnonymous]
@@ -36,6 +40,7 @@ namespace CryptomonServer.Controllers
 
             return new MessageVM { Account = connectVm.Account, Message = string.Format(message, connectVm.Nonce) };
         }
+
 
         [AllowAnonymous]
         [HttpPost("CreateToken")]
@@ -50,6 +55,35 @@ namespace CryptomonServer.Controllers
             }
 
             return Unauthorized();
+        }
+
+
+        [Authorize]
+        [HttpGet("GetAccount")]
+        public async Task<IActionResult> GetAccount()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var claimAccount = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Name);
+            var address = claimAccount.Value;
+            var account = await _accountService.GetAccount(address);
+            return Ok(account);
+        }
+
+        [Authorize]
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] AccountDto newAccount)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var claimAccount = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Name);
+
+            if (!string.Equals(claimAccount.Value, newAccount.Address, StringComparison.OrdinalIgnoreCase))
+            {
+                // need to be address in account to register
+                return Unauthorized();
+            }
+            await _accountService.Register(newAccount);
+
+            return Ok(newAccount);
         }
 
         private ConnectionVM CheckEntry(string account)
@@ -144,5 +178,7 @@ namespace CryptomonServer.Controllers
 
             return user;
         }
+
+
     }
 }
