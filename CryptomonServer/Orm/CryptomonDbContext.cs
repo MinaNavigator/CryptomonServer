@@ -9,6 +9,8 @@ namespace CryptomonServer.Orm
     {
         public DbSet<Account> Accounts { get; set; }
         public DbSet<GameAction> GameActions { get; set; }
+        public DbSet<Cryptomon> Cryptomons { get; set; }
+        public DbSet<Monster> Monsters { get; set; }
 
         public CryptomonDbContext(DbContextOptions options)
     : base(options)
