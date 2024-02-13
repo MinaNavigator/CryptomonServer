@@ -8,11 +8,18 @@ namespace CryptomonServer.Orm
     public enum ActionType
     {
         None = 0,
-        Mint = 1,
-        Transfer = 2,
-        Burn = 3,
-        Deposit = 4,
-        Withdraw = 5
+        MintMonster = 1,
+        TransferMonster = 2,
+        BurnMonster = 3,
+        DepositMina = 4,
+        WithdrawMina = 5,
+        TransferMina = 6,
+        MintItem = 7,
+        TransferItem = 8,
+        BurnItem = 9,
+        MintToken = 10,
+        TransferToken = 11,
+        BurnToken = 12
     }
 
     // Store all game event and compile it at merkle tree to store it on mina blockchain
