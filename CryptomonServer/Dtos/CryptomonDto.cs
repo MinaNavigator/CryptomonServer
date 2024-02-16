@@ -1,8 +1,16 @@
-﻿using CryptomonServer.Dtos;
-
-namespace CryptomonServer.Orm
+﻿namespace CryptomonServer.Dtos
 {
-    public class Cryptomon
+    [Flags]
+    public enum CryptomonType
+    {
+        Nothing = 0,
+        Fire = 1,
+        Water = 2,
+        Earth = 3,
+        Wind = 4
+    }
+
+    public class CryptomonDto
     {
         public int CryptomonId { get; set; }
         public string Name { get; set; }
