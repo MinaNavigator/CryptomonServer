@@ -9,7 +9,9 @@ namespace EukaApi
         public MappingProfile()
         {
             CreateMap<Monster, MonsterDto>();
+            CreateMap<MonsterDto, Monster>();
             CreateMap<Cryptomon, CryptomonDto>();
+            CreateMap<CryptomonDto, Cryptomon>();
         }
     }
 }
