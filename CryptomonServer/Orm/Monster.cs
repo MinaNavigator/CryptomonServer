@@ -7,6 +7,7 @@
         public int CryptomonId { get; set; }
         public int ActualHp { get; set; }
         public int Level { get; set; }
+        public int Experience { get; set; }
 
         public virtual Cryptomon Cryptomon { get; set; }
         public virtual Account Account { get; set; }

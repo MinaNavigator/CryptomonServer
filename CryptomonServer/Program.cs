@@ -12,6 +12,8 @@ var configuration = builder.Configuration;
 builder.Services.AddDbContext<CryptomonDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddAutoMapper(typeof(Program));
+
 // Add services to the container.
 builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();

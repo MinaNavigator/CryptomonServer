@@ -1,4 +1,5 @@
-﻿using CryptomonServer.Dtos;
+﻿using AutoMapper;
+using CryptomonServer.Dtos;
 using CryptomonServer.Orm;
 using CryptomonServer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -11,14 +12,16 @@ namespace CryptomonServer.Services
         private IConfiguration _config;
         private readonly IMemoryCache _cache;
         private readonly ILogger<MonsterService> _logger;
+        private readonly IMapper _mapper;
         private readonly CryptomonDbContext _dbContext;
 
-        public MonsterService(ILogger<MonsterService> logger, IConfiguration config, IMemoryCache cache, CryptomonDbContext dbContext)
+        public MonsterService(ILogger<MonsterService> logger, IConfiguration config, IMemoryCache cache, CryptomonDbContext dbContext, IMapper mapper)
         {
             _logger = logger;
             _config = config;
             _cache = cache;
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public async Task<MonsterDto> AddMonster(int cryptomonId, int playerId)
@@ -27,29 +30,35 @@ namespace CryptomonServer.Services
             var monster = new Monster { CryptomonId = cryptomonId, ActualHp = cryptomon.Hp, Level = 1 };
             await _dbContext.AddAsync(monster);
             await _dbContext.SaveChangesAsync();
-            return new MonsterDto();
+            return _mapper.Map<MonsterDto>(monster);
         }
 
         public async Task<MonsterDto> GetMonster(int monsterId)
         {
             var monster = await _dbContext.Monsters.SingleAsync(x => x.MonsterId == monsterId);
-            return new MonsterDto();
+            return _mapper.Map<MonsterDto>(monster);
         }
 
         public async Task<List<MonsterDto>> GetMonsterForPlayer(int playerId)
         {
             var monster = await _dbContext.Monsters.Where(x => x.AccountId == playerId).ToListAsync();
-            return new List<MonsterDto>();
+            return monster.Select(x => _mapper.Map<MonsterDto>(x)).ToList();
         }
 
-        public Task TransferMonster(int monsterId, int toPlayerId)
+        public async Task TransferMonster(int monsterId, int toPlayerId)
         {
-            throw new NotImplementedException();
+            var monster = await _dbContext.Monsters.SingleAsync(x => x.MonsterId == monsterId);
+            monster.AccountId = toPlayerId;
+            await _dbContext.SaveChangesAsync();
         }
 
-        public Task<MonsterDto> UpdateMonster(int monsterId, int hp, int exp)
+        public async Task<MonsterDto> UpdateMonster(int monsterId, int hp, int exp)
         {
-            throw new NotImplementedException();
+            var monster = await _dbContext.Monsters.SingleAsync(x => x.MonsterId == monsterId);
+            monster.ActualHp = hp;
+            monster.Experience = exp;
+            await _dbContext.SaveChangesAsync();
+            return _mapper.Map<MonsterDto>(monster);
         }
     }
 }
