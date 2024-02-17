@@ -30,14 +30,16 @@ namespace CryptomonServer.Services
             return new MonsterDto();
         }
 
-        public Task<MonsterDto> GetMonster(int monsterId)
+        public async Task<MonsterDto> GetMonster(int monsterId)
         {
-            throw new NotImplementedException();
+            var monster = await _dbContext.Monsters.SingleAsync(x => x.MonsterId == monsterId);
+            return new MonsterDto();
         }
 
-        public Task<List<MonsterDto>> GetMonsterForPlayer(int playerId)
+        public async Task<List<MonsterDto>> GetMonsterForPlayer(int playerId)
         {
-            throw new NotImplementedException();
+            var monster = await _dbContext.Monsters.Where(x => x.AccountId == playerId).ToListAsync();
+            return new List<MonsterDto>();
         }
 
         public Task TransferMonster(int monsterId, int toPlayerId)
