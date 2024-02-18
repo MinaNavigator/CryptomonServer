@@ -1,4 +1,5 @@
 ﻿using CryptomonServer.Dtos;
+using CryptomonServer.Services;
 using CryptomonServer.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -23,14 +24,16 @@ namespace CryptomonServer.Controllers
         private readonly ILogger<MonsterController> _logger;
         private readonly IMonsterService _monsterService;
         private readonly ICryptomonService _cryptomonService;
+        private readonly IAccountService _accountService;
         private const string message = "Welcome to the mina asp auth, sign this message to authenticate {0}";
         private const string cacheConnectionKey = "GetConnection_{0}";
 
-        public MonsterController(ILogger<MonsterController> logger, IConfiguration config, IMemoryCache cache, IMonsterService monsterService, ICryptomonService cryptomonService)
+        public MonsterController(ILogger<MonsterController> logger, IConfiguration config, IMemoryCache cache, IMonsterService monsterService, ICryptomonService cryptomonService, IAccountService accountService)
         {
             _logger = logger;
             _config = config;
             _cache = cache;
+            _accountService = accountService;
             _monsterService = monsterService;
             _cryptomonService = cryptomonService;
         }
@@ -45,9 +48,12 @@ namespace CryptomonServer.Controllers
          [HttpGet("GetByPlayer")]
         public async Task<IActionResult> GetByPlayer()
         {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var claimAccount = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Name);
+            var address = claimAccount.Value;
 
-            var cryptomons = await _cryptomonService.GetAll();
-            return Ok(cryptomons);
+            var monsters = await _monsterService.GetMonsterForPlayer(address);
+            return Ok(monsters);
         }
 
     }

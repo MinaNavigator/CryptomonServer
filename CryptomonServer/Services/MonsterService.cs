@@ -39,9 +39,9 @@ namespace CryptomonServer.Services
             return _mapper.Map<MonsterDto>(monster);
         }
 
-        public async Task<List<MonsterDto>> GetMonsterForPlayer(int playerId)
+        public async Task<List<MonsterDto>> GetMonsterForPlayer(string address)
         {
-            var monster = await _dbContext.Monsters.Where(x => x.AccountId == playerId).ToListAsync();
+            var monster = await _dbContext.Monsters.Where(x => x.Account.Address == address).ToListAsync();
             return monster.Select(x => _mapper.Map<MonsterDto>(x)).ToList();
         }
 

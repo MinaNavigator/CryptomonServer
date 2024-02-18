@@ -9,6 +9,6 @@ namespace CryptomonServer.Services.Interfaces
         Task<MonsterDto> UpdateMonster(int monsterId, int hp, int exp);
         Task TransferMonster(int monsterId, int toPlayerId);
         Task<MonsterDto> GetMonster(int monsterId);
-        Task<List<MonsterDto>> GetMonsterForPlayer(int playerId);
+        Task<List<MonsterDto>> GetMonsterForPlayer(string address);
     }
 }
