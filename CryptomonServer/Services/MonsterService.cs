@@ -45,10 +45,11 @@ namespace CryptomonServer.Services
             return monster.Select(x => _mapper.Map<MonsterDto>(x)).ToList();
         }
 
-        public async Task TransferMonster(int monsterId, int toPlayerId)
+        public async Task TransferMonster(int monsterId, string addressFrom, string addressTo)
         {
-            var monster = await _dbContext.Monsters.SingleAsync(x => x.MonsterId == monsterId);
-            monster.AccountId = toPlayerId;
+            var monster = await _dbContext.Monsters.Where(x=>x.Account.Address == addressFrom).SingleAsync(x => x.MonsterId == monsterId);
+            var accountTo =await _dbContext.Accounts.SingleAsync(x=>x.Address == addressTo);
+            monster.AccountId = accountTo.AccountId;
             await _dbContext.SaveChangesAsync();
         }
 
