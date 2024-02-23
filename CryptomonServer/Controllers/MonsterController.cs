@@ -45,7 +45,7 @@ namespace CryptomonServer.Controllers
             return Ok(cryptomons);
         }
 
-         [HttpGet("GetByPlayer")]
+        [HttpGet("GetByPlayer")]
         public async Task<IActionResult> GetByPlayer()
         {
             var claimsIdentity = User.Identity as ClaimsIdentity;
@@ -54,6 +54,17 @@ namespace CryptomonServer.Controllers
 
             var monsters = await _monsterService.GetMonsterForPlayer(address);
             return Ok(monsters);
+        }
+
+        [HttpPost("TransferTo")]
+        public async Task<IActionResult> TransferTo([FromBody] TransferDto transferData)
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var claimAccount = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Name);
+            var address = claimAccount.Value;
+
+            await _monsterService.TransferMonster(transferData.MonsterId, address, transferData.AddressTo);
+            return Ok();
         }
 
     }
