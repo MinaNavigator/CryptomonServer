@@ -34,6 +34,7 @@ namespace CryptomonServer.Orm
         public long ItemId { get; set; }
         public long PayoutId { get; set; }
         public ActionType ActionType { get; set; }
-        public DateTime RegistrationDate { get; set; }
+        public DateTime AddedDate { get; set; }
+        public DateTime? RegistrationDate { get; set; }
     }
 }
