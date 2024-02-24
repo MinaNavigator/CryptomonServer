@@ -27,6 +27,18 @@ namespace CryptomonServer.Services
         public async Task GetDeposits()
         {
             // todo read from protokit api deposit
+
+            HttpClient client = new HttpClient();
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "url to define");
+
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("Authorization", $"Bearer {_config["ApiKey"]}");
+
+            HttpResponseMessage response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
+
             var action = new GameAction() { ActionType = ActionType.DepositMina };
             
 
@@ -37,6 +49,17 @@ namespace CryptomonServer.Services
             var actions = await _dbContext.GameActions.Where(x => x.RegistrationDate == null).OrderBy(x => x.ActionId).ToListAsync();
 
             // todo send actions to protokit restapi
+
+            HttpClient client = new HttpClient();
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "url to define");
+
+            request.Headers.Add("Accept", "application/json");
+            request.Headers.Add("Authorization", $"Bearer {_config["ApiKey"]}");
+
+            HttpResponseMessage response = await client.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            string responseBody = await response.Content.ReadAsStringAsync();
 
             //return false;
         }
