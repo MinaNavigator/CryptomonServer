@@ -6,17 +6,23 @@
 
 </head>
 <body>
-    <h3>Hello and welcome to mina Asp test auth</h3>
-    <p>In this project I show you how to implement auth in Asp.net server with your mina wallet (Tested with Auro Wallet)</p>
+    <h3>Hello and welcome on Cryptomon</h3>
+    <p>Actually you can juste creat an account with your mina wallet on !!!DEVNET!!! (Tested with Auro Wallet)</p>
     <p id="status"></p>
     <button onclick="requestAuth()">Request Auth</button>
-    <p>Once authenticated you can call a endpoint who needs authentification</p>
-    <button onclick="getWeather()">Get randow weather</button>
+    <p>Once authenticated you can see your account or create one</p>
+
+    <div id="register" style="display:none;">
+        <input type="text" id="username" />
+        <button onclick="register()">Register</button>
+    </div>
     <p id="weather"></p>
 </body>
 <script>
     var statusP = document.getElementById("status");
     var weatherP = document.getElementById("weather");
+    var registerDiv = document.getElementById("register");
+    var usernameInput = document.getElementById("username");
     var token;
     async function requestAuth() {
         statusP.innerText = "Requesting auth";
@@ -45,18 +51,36 @@
         });
         var tokenResult = await createToken.json();
         token = tokenResult.token;
+
+        try {
+            var getAccount = await fetch("api/auth/getAccount", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            var accountResult = await getAccount.json();
+            weatherP.innerText = JSON.stringify(accountResult);
+        } catch (e) {
+            registerDiv.style.display = 'block';
+        }
         console.log("tokenResult", tokenResult);
         statusP.innerText = "Correctly authenticated bearer token : " + token;
     }
 
-    async function getWeather() {
+    async function register() {
         try {
-            weatherP.innerText = "Requesting weather";
-            var weather = await fetch("api/weatherforecast", {
-                headers: { Authorization: `Bearer ${token}` }
+            const account = await window.mina.requestAccounts();
+            weatherP.innerText = "Register account";
+            var weather = await fetch("api/auth/register", {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    'Accept': 'application/json; charset=utf-8',
+                    'Content-Type': 'application/json;charset=UTF-8'
+                },
+                method: 'POST',
+                body: JSON.stringify({ address: account[0], username: usernameInput.value, recoveryEmail: "" })
             });
             var result = await weather.json();
             weatherP.innerText = JSON.stringify(result);
+            registerDiv.style.display = 'none';
         } catch (e) {
             weatherP.innerText = e.toString();
         }

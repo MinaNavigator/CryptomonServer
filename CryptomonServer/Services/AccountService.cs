@@ -35,9 +35,9 @@ namespace CryptomonServer.Services
 
         public async Task<AccountDto> GetAccount(string address)
         {
-            var entity = await _dbContext.Accounts.Where(x => x.Address == address).FirstOrDefaultAsync();
+            var entity = await _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, address)).FirstOrDefaultAsync();
             return entity != null ?
-                new AccountDto() { Address = entity.Address, RecoveryEmail = entity.RecoveryMail }
+                new AccountDto() { Address = entity.Address, Username = entity.Username, RecoveryEmail = entity.RecoveryMail }
                 : new AccountDto();
         }
     }

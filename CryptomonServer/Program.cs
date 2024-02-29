@@ -1,4 +1,6 @@
 using CryptomonServer.Orm;
+using CryptomonServer.Services;
+using CryptomonServer.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,6 +20,11 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLogging();
+
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<ICryptomonService, CryptomonService>();
+builder.Services.AddScoped<IProtokitService, ProtokitService>();
+builder.Services.AddScoped<IMonsterService, MonsterService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
