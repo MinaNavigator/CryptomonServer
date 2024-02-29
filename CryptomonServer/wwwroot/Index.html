@@ -57,8 +57,13 @@
                 headers: { Authorization: `Bearer ${token}` }
             });
             var accountResult = await getAccount.json();
-            weatherP.innerText = JSON.stringify(accountResult);
+            if (!accountResult.address) {
+                registerDiv.style.display = 'block';
+            } else {
+                weatherP.innerText = JSON.stringify(accountResult);
+            }
         } catch (e) {
+
             registerDiv.style.display = 'block';
         }
         console.log("tokenResult", tokenResult);
