@@ -12,6 +12,8 @@ namespace CryptomonServer.Orm
         public DbSet<Cryptomon> Cryptomons { get; set; }
         public DbSet<Monster> Monsters { get; set; }
         public DbSet<Land> Lands { get; set; }
+        public DbSet<Planting> Plantings { get; set; }
+        public DbSet<Fruit> Fruits { get; set; }
 
         public CryptomonDbContext(DbContextOptions options)
     : base(options)
