@@ -2,7 +2,7 @@
 {
     public class LoginVM
     {
-        public string Signer { get; set; } // Ethereum account that claim the signature
+        public string Signer { get; set; } // Mina account that claim the signature
         public string Field { get; set; } // The signature R composant
         public string Scalar { get; set; } // The signature S composant
         public string Message { get; set; } // The plain message
@@ -10,7 +10,7 @@
 
     public class UserVM
     {
-        public string Account { get; set; } // Unique account name (the Ethereum account)
+        public string Account { get; set; } // Unique account name (the Mina account)
         public string Name { get; set; } // The user name
         public string Email { get; set; } // The user Email
     }
