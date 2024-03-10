@@ -75,6 +75,37 @@ using (var scope = app.Services.CreateScope())
 
 app.UseHttpsRedirection();
 
+app.UseDefaultFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = context =>
+    {
+        IHeaderDictionary headers = context.Context.Response.Headers;
+        string contentType = headers["Content-Type"];
+        if (contentType == "application/x-gzip")
+        {
+            if (context.File.Name.EndsWith("js.gz"))
+            {
+                contentType = "application/javascript";
+            }
+            else if (context.File.Name.EndsWith("css.gz"))
+            {
+                contentType = "text/css";
+            }
+            else if (context.File.Name.EndsWith("wasm.gz"))
+            {
+                contentType = "application/wasm";
+            }
+            headers.Add("Content-Encoding", "gzip");
+            headers["Content-Type"] = contentType;
+            if (context.File.Name.EndsWith("data.gz"))
+            {
+                headers.Remove("Content-Type");
+            }
+        }       
+    }
+});
+
 // global cors policy
 app.UseCors(x => x
     .AllowAnyMethod()
