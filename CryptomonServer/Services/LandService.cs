@@ -74,5 +74,28 @@ namespace CryptomonServer.Services
 
             return _mapper.Map<PlantingDto>(actualPlant);
         }
+
+        public async Task<LandDto> BuyLevel(string address)
+        {
+            var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
+            if (land.Level > 2)
+            {
+                throw new Exception("Already level max.");
+            }
+            var price = land.Level * 50 + 100;
+            var account = _dbContext.Accounts.Where(x => x.Address == address).Single();
+            if (account.CoinBalance >= price)
+            {
+                land.Level++;
+                account.CoinBalance -= price;
+
+                await _dbContext.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Insufficient amount.");
+            }
+            return _mapper.Map<LandDto>(land);
+        }
     }
 }
