@@ -3,6 +3,7 @@ using CryptomonServer.Dtos;
 using CryptomonServer.Orm;
 using CryptomonServer.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
+using System.Net;
 
 namespace CryptomonServer.Services
 {
@@ -24,9 +25,23 @@ namespace CryptomonServer.Services
             _mapper = mapper;
         }
 
-        public async Task<PlantingDto> AddPlant(PlantingDto plant)
+        public async Task<PlantingDto> AddPlant(string address, PlantingDto plant)
         {
-            throw new NotImplementedException();
+            var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
+            var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
+            if (actualPlant?.FruitId > 0)
+            {
+                throw new Exception("Harvest before plant.");
+            }
+
+            // 5 square for level 0, and 3 square for each level
+            if (plant.Square >= (5 + 3 * land.Level))
+            {
+                throw new Exception("Square didn't exist");
+            }
+
+
+            return _mapper.Map<PlantingDto>(actualPlant);
         }
 
         public async Task<LandDto> GetLand(string address)
@@ -34,6 +49,7 @@ namespace CryptomonServer.Services
             var land = _dbContext.Lands.Where(x => x.Account.Address == address).FirstOrDefault();
             if (land == null)
             {
+                // create a default land if user didn't have one
                 var account = _dbContext.Accounts.Where(x => x.Address == address).Single();
                 land = new Land() { AccountId = account.AccountId, Level = 0 };
                 _dbContext.Lands.Add(land);
@@ -43,9 +59,20 @@ namespace CryptomonServer.Services
             return _mapper.Map<LandDto>(land);
         }
 
-        public async Task<PlantingDto> HarvestPlant(PlantingDto plant)
+        public async Task<PlantingDto> HarvestPlant(string address, PlantingDto plant)
         {
-            throw new NotImplementedException();
+            var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
+            var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
+            if (actualPlant?.FruitId == 0)
+            {
+                throw new Exception("Nothing to harvest.");
+            }
+
+            actualPlant.FruitId = 0;
+
+            await _dbContext.SaveChangesAsync();
+
+            return _mapper.Map<PlantingDto>(actualPlant);
         }
     }
 }

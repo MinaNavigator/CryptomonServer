@@ -5,7 +5,7 @@ namespace CryptomonServer.Services.Interfaces
     public interface ILandService
     {
         Task<LandDto> GetLand(string address);
-        Task<PlantingDto> AddPlant(PlantingDto plant);
-        Task<PlantingDto> HarvestPlant(PlantingDto plant);
+        Task<PlantingDto> AddPlant(string address, PlantingDto plant);
+        Task<PlantingDto> HarvestPlant(string address, PlantingDto plant);
     }
 }
