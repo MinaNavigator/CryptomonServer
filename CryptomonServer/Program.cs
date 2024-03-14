@@ -25,6 +25,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICryptomonService, CryptomonService>();
 builder.Services.AddScoped<IProtokitService, ProtokitService>();
 builder.Services.AddScoped<IMonsterService, MonsterService>();
+builder.Services.AddScoped<ILandService, LandService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
