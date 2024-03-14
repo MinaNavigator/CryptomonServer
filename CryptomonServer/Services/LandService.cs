@@ -53,6 +53,13 @@ namespace CryptomonServer.Services
                 var account = _dbContext.Accounts.Where(x => x.Address == address).Single();
                 land = new Land() { AccountId = account.AccountId, Level = 0 };
                 _dbContext.Lands.Add(land);
+                // first plantation offers
+                Planting plant = new Planting() { FruitId = 1, Square = 0 };
+                Planting plant2 = new Planting() { FruitId = 1, Square = 1 };
+                Planting plant3 = new Planting() { FruitId = 1, Square = 2 };
+                land.Plantings.Add(plant);
+                land.Plantings.Add(plant2);
+                land.Plantings.Add(plant3);
                 await _dbContext.SaveChangesAsync();
             }
 

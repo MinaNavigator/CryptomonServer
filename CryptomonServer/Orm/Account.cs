@@ -15,7 +15,11 @@ namespace CryptomonServer.Orm
         public string Username { get; set; }
         public string? RecoveryMail { get; set; }
         public DateTime RegistrationDate { get; set; }
-        public long CoinBalance { get; set; }
-        public long MinaBalance { get; set; }
+        [Range(0.0, Double.MaxValue)]
+        [Precision(32, 9)]
+        public decimal CoinBalance { get; set; }
+        [Range(0.0, Double.MaxValue)]
+        [Precision(32, 9)]
+        public decimal MinaBalance { get; set; }
     }
 }

@@ -10,5 +10,6 @@ namespace CryptomonServer.Orm
         public int Level { get; set; }
 
         public virtual Account Account { get; set; }
+        public virtual List<Planting> Plantings { get; set; }
     }
 }
