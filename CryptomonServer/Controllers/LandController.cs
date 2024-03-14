@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace CryptomonServer.Controllers
 {
@@ -28,6 +31,21 @@ namespace CryptomonServer.Controllers
             _monsterService = monsterService;
             _landService = landService;
 
+        }
+
+        [HttpGet()]
+        public async Task<IActionResult> GetLand()
+        {
+            var land = await _landService.GetLand(GetAddress());
+            return Ok(land);
+        }
+
+
+        private string GetAddress()
+        {
+            var claimsIdentity = User.Identity as ClaimsIdentity;
+            var claimAccount = claimsIdentity.FindFirst(JwtRegisteredClaimNames.Name);
+            return claimAccount.Value;
         }
     }
 }
