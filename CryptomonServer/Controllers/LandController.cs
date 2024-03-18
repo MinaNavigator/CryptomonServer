@@ -55,6 +55,13 @@ namespace CryptomonServer.Controllers
             return Ok(land);
         }
 
+        [HttpPost("BuyLevel")]
+        public async Task<IActionResult> BuyLevel()
+        {
+            var land = await _landService.BuyLevel(GetAddress());
+            return Ok(land);
+        }
+
 
         private string GetAddress()
         {
