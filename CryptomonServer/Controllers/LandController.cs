@@ -1,4 +1,5 @@
-﻿using CryptomonServer.Services.Interfaces;
+﻿using CryptomonServer.Dtos;
+using CryptomonServer.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,20 @@ namespace CryptomonServer.Controllers
         public async Task<IActionResult> GetLand()
         {
             var land = await _landService.GetLand(GetAddress());
+            return Ok(land);
+        }
+
+        [HttpPost("AddPlant")]
+        public async Task<IActionResult> AddPlant([FromBody]PlantingDto plan)
+        {
+            var land = await _landService.AddPlant(GetAddress(),plan);
+            return Ok(land);
+        }
+
+        [HttpPost("HarvestPlant")]
+        public async Task<IActionResult> HarvestPlant([FromBody] PlantingDto plan)
+        {
+            var land = await _landService.HarvestPlant(GetAddress(), plan);
             return Ok(land);
         }
 
