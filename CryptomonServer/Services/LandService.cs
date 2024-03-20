@@ -85,11 +85,26 @@ namespace CryptomonServer.Services
         public async Task<LandDto> BuyLevel(string address)
         {
             var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
-            if (land.Level > 2)
+            if (land.Level > 3)
             {
                 throw new Exception("Already level max.");
             }
-            var price = land.Level * 50 + 100;
+            var price = 2500m;
+            switch (land.Level)
+            {
+                case 0:
+                    price = 1;
+                    break;
+                case 1:
+                    price = 50;
+                    break;
+                case 2:
+                    price = 500;
+                    break;
+                default:
+                    price = 2500;
+                    break;
+            }
             var account = _dbContext.Accounts.Where(x => x.Address == address).Single();
             if (account.CoinBalance >= price)
             {
