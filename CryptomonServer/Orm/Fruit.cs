@@ -19,7 +19,7 @@ namespace CryptomonServer.Orm
 
         public Fruit() { }
 
-        public Fruit(int fruitId, string name, int growTime, long seedPrice, long plantPrice)
+        public Fruit(int fruitId, string name, int growTime, decimal seedPrice, decimal plantPrice)
         {
             FruitId = fruitId;
             Name = name;
