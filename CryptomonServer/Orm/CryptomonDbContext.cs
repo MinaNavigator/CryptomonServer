@@ -25,6 +25,8 @@ namespace CryptomonServer.Orm
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfiguration(new FruitConfiguration());
+
+            modelBuilder.Entity<Planting>().Property(e => e.PlantingDate).HasDefaultValueSql("NOW()");
         }
 
     }
