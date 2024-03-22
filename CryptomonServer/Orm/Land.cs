@@ -11,5 +11,10 @@ namespace CryptomonServer.Orm
 
         public virtual Account Account { get; set; }
         public virtual List<Planting> Plantings { get; set; }
+
+        public Land()
+        {
+            Plantings = new List<Planting>();
+        }
     }
 }

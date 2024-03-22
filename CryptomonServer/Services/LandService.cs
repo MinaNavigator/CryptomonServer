@@ -2,6 +2,7 @@
 using CryptomonServer.Dtos;
 using CryptomonServer.Orm;
 using CryptomonServer.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using System.Net;
 
@@ -27,7 +28,7 @@ namespace CryptomonServer.Services
 
         public async Task<PlantingDto> AddPlant(string address, PlantingDto plant)
         {
-            var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Single();
             var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
             if (actualPlant?.FruitId > 0)
             {
@@ -46,11 +47,11 @@ namespace CryptomonServer.Services
 
         public async Task<LandDto> GetLand(string address)
         {
-            var land = _dbContext.Lands.Where(x => x.Account.Address == address).FirstOrDefault();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x=>x.Plantings).FirstOrDefault();
             if (land == null)
             {
                 // create a default land if user didn't have one
-                var account = _dbContext.Accounts.Where(x => x.Address == address).Single();
+                var account = _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, address)).Single();
                 land = new Land() { AccountId = account.AccountId, Level = 0 };
                 _dbContext.Lands.Add(land);
                 // first plantation offers
@@ -68,7 +69,7 @@ namespace CryptomonServer.Services
 
         public async Task<PlantingDto> HarvestPlant(string address, PlantingDto plant)
         {
-            var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Single();
             var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
             if (actualPlant?.FruitId == 0)
             {
@@ -84,7 +85,7 @@ namespace CryptomonServer.Services
 
         public async Task<LandDto> BuyLevel(string address)
         {
-            var land = _dbContext.Lands.Where(x => x.Account.Address == address).Single();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Single();
             if (land.Level > 3)
             {
                 throw new Exception("Already level max.");
@@ -105,7 +106,7 @@ namespace CryptomonServer.Services
                     price = 2500;
                     break;
             }
-            var account = _dbContext.Accounts.Where(x => x.Address == address).Single();
+            var account = _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, address)).Single();
             if (account.CoinBalance >= price)
             {
                 land.Level++;

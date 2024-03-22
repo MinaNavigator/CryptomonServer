@@ -12,6 +12,10 @@ namespace EukaApi
             CreateMap<MonsterDto, Monster>();
             CreateMap<Cryptomon, CryptomonDto>();
             CreateMap<CryptomonDto, Cryptomon>();
+            CreateMap<Land, LandDto>();
+            CreateMap<LandDto, Land>();
+            CreateMap<Planting, PlantingDto>();
+            CreateMap<PlantingDto, Planting>();
         }
     }
 }
