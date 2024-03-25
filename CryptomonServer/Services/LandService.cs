@@ -90,22 +90,8 @@ namespace CryptomonServer.Services
             {
                 throw new Exception("Already level max.");
             }
-            var price = 2500m;
-            switch (land.Level)
-            {
-                case 0:
-                    price = 1;
-                    break;
-                case 1:
-                    price = 50;
-                    break;
-                case 2:
-                    price = 500;
-                    break;
-                default:
-                    price = 2500;
-                    break;
-            }
+            var nextLevel = GetLevelPrice().Where(x => x.Level == land.Level + 1).First();
+            var price = nextLevel.Price;
             var account = _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, address)).Single();
             if (account.CoinBalance >= price)
             {

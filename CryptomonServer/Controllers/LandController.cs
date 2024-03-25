@@ -42,9 +42,9 @@ namespace CryptomonServer.Controllers
         }
 
         [HttpPost("AddPlant")]
-        public async Task<IActionResult> AddPlant([FromBody]PlantingDto plan)
+        public async Task<IActionResult> AddPlant([FromBody] PlantingDto plan)
         {
-            var land = await _landService.AddPlant(GetAddress(),plan);
+            var land = await _landService.AddPlant(GetAddress(), plan);
             return Ok(land);
         }
 
@@ -61,6 +61,14 @@ namespace CryptomonServer.Controllers
             var land = await _landService.BuyLevel(GetAddress());
             return Ok(land);
         }
+
+        [HttpGet("GetLevelPrice")]
+        public IActionResult GetLevelPrice()
+        {
+            var land = _landService.GetLevelPrice();
+            return Ok(land);
+        }
+
 
 
         private string GetAddress()
