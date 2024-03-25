@@ -47,7 +47,7 @@ namespace CryptomonServer.Services
 
         public async Task<LandDto> GetLand(string address)
         {
-            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x=>x.Plantings).FirstOrDefault();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x => x.Plantings).FirstOrDefault();
             if (land == null)
             {
                 // create a default land if user didn't have one
@@ -119,6 +119,15 @@ namespace CryptomonServer.Services
                 throw new Exception("Insufficient amount.");
             }
             return _mapper.Map<LandDto>(land);
+        }
+
+        public List<LevelDto> GetLevelPrice()
+        {
+            var level1 = new LevelDto(1, 1);
+            var level2 = new LevelDto(2, 50);
+            var level3 = new LevelDto(3, 500);
+            var level4 = new LevelDto(4, 2500);
+            return new List<LevelDto>() { level1, level2, level3, level4 };
         }
     }
 }

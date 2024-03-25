@@ -8,5 +8,6 @@ namespace CryptomonServer.Services.Interfaces
         Task<LandDto> BuyLevel(string address);
         Task<PlantingDto> AddPlant(string address, PlantingDto plant);
         Task<PlantingDto> HarvestPlant(string address, PlantingDto plant);
+        List<LevelDto> GetLevelPrice();
     }
 }
