@@ -4,7 +4,6 @@ using CryptomonServer.Orm;
 using CryptomonServer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
-using System.Net;
 
 namespace CryptomonServer.Services
 {
@@ -28,11 +27,17 @@ namespace CryptomonServer.Services
 
         public async Task<PlantingDto> AddPlant(string address, PlantingDto plant)
         {
-            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Single();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x => x.Account).Single();
             var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
             if (actualPlant?.FruitId > 0)
             {
                 throw new Exception("Harvest before plant.");
+            }
+
+            var fruit = _dbContext.Fruits.Where(x => x.FruitId == plant.FruitId).Single();
+            if (fruit.LevelMin > land.Level)
+            {
+                throw new Exception("Seed not unlocked");
             }
 
             // 5 square for level 0, and 3 square for each level
@@ -41,6 +46,8 @@ namespace CryptomonServer.Services
                 throw new Exception("Square didn't exist");
             }
 
+            // remove seed price to account balance
+            land.Account.CoinBalance -= fruit.SeedPrice;
 
             return _mapper.Map<PlantingDto>(actualPlant);
         }
@@ -69,12 +76,15 @@ namespace CryptomonServer.Services
 
         public async Task<PlantingDto> HarvestPlant(string address, PlantingDto plant)
         {
-            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Single();
-            var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
+            var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x => x.Account).Single();
+            var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).Include(x => x.Fruit).FirstOrDefault();
             if (actualPlant?.FruitId == 0)
             {
                 throw new Exception("Nothing to harvest.");
             }
+
+            // add plant price to account balance
+            land.Account.CoinBalance += actualPlant.Fruit.PlantPrice;
 
             actualPlant.FruitId = 0;
 

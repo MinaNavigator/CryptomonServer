@@ -15,6 +15,6 @@ namespace CryptomonServer.Orm
         public int FruitId { get; set; }
         public DateTime PlantingDate { get; set; }
         public virtual Land Land { get; set; }
-
+        public virtual Fruit Fruit { get; set; }
     }
 }
