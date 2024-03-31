@@ -37,36 +37,77 @@ namespace CryptomonServer.Controllers
         [HttpGet()]
         public async Task<IActionResult> GetLand()
         {
-            var land = await _landService.GetLand(GetAddress());
-            return Ok(land);
+            try
+            {
+                var land = await _landService.GetLand(GetAddress());
+                return Ok(land);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetLand");
+                return BadRequest(ex);
+            }
+
         }
 
         [HttpPost("AddPlant")]
         public async Task<IActionResult> AddPlant([FromBody] PlantingDto plan)
         {
-            var land = await _landService.AddPlant(GetAddress(), plan);
-            return Ok(land);
+            try
+            {
+                var land = await _landService.AddPlant(GetAddress(), plan);
+                return Ok(land);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetLand");
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("HarvestPlant")]
         public async Task<IActionResult> HarvestPlant([FromBody] PlantingDto plan)
         {
-            var land = await _landService.HarvestPlant(GetAddress(), plan);
-            return Ok(land);
+            try
+            {
+                var land = await _landService.HarvestPlant(GetAddress(), plan);
+                return Ok(land);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "HarvestPlant");
+                return BadRequest(ex);
+            }
         }
 
         [HttpPost("BuyLevel")]
         public async Task<IActionResult> BuyLevel()
         {
-            var land = await _landService.BuyLevel(GetAddress());
-            return Ok(land);
+            try
+            {
+                var land = await _landService.BuyLevel(GetAddress());
+                return Ok(land);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BuyLevel");
+                return BadRequest(ex);
+            }
         }
 
         [HttpGet("GetLevelPrice")]
         public IActionResult GetLevelPrice()
         {
-            var land = _landService.GetLevelPrice();
-            return Ok(land);
+            try
+            {
+                var land = _landService.GetLevelPrice();
+                return Ok(land);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "BuyLevel");
+                return BadRequest(ex);
+            }
         }
 
 
