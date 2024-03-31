@@ -55,8 +55,9 @@ namespace CryptomonServer.Services
             }
             else
             {
-                var newPlant = _mapper.Map<Planting>(plant);
-                land.Plantings.Add(newPlant);
+                actualPlant = _mapper.Map<Planting>(plant);
+                actualPlant.PlantingDate = DateTime.UtcNow;
+                land.Plantings.Add(actualPlant);
             }
 
             await _dbContext.SaveChangesAsync();
