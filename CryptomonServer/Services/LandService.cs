@@ -48,8 +48,22 @@ namespace CryptomonServer.Services
 
             // remove seed price to account balance
             land.Account.CoinBalance -= fruit.SeedPrice;
+            if (actualPlant != null)
+            {
+                actualPlant.Fruit = fruit;
+                actualPlant.PlantingDate = DateTime.UtcNow;
+            }
+            else
+            {
+                var newPlant = _mapper.Map<Planting>(plant);
+                land.Plantings.Add(newPlant);
+            }
 
-            return _mapper.Map<PlantingDto>(actualPlant);
+            await _dbContext.SaveChangesAsync();
+
+            var result = _mapper.Map<PlantingDto>(actualPlant);
+            result.CoinBalance = land.Account.CoinBalance;
+            return result;
         }
 
         public async Task<LandDto> GetLand(string address)
@@ -90,7 +104,9 @@ namespace CryptomonServer.Services
 
             await _dbContext.SaveChangesAsync();
 
-            return _mapper.Map<PlantingDto>(actualPlant);
+            var result = _mapper.Map<PlantingDto>(actualPlant);
+            result.CoinBalance = land.Account.CoinBalance;
+            return result;
         }
 
         public async Task<LandDto> BuyLevel(string address)

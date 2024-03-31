@@ -8,6 +8,8 @@ namespace EukaApi
     {
         public MappingProfile()
         {
+            CreateMap<Account, AccountDto>();
+            CreateMap<AccountDto, Account>();
             CreateMap<Monster, MonsterDto>();
             CreateMap<MonsterDto, Monster>();
             CreateMap<Cryptomon, CryptomonDto>();

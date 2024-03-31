@@ -1,4 +1,5 @@
-﻿using CryptomonServer.Dtos;
+﻿using AutoMapper;
+using CryptomonServer.Dtos;
 using CryptomonServer.Orm;
 using CryptomonServer.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -12,13 +13,15 @@ namespace CryptomonServer.Services
         private readonly IMemoryCache _cache;
         private readonly ILogger<AccountService> _logger;
         private readonly CryptomonDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public AccountService(ILogger<AccountService> logger, IConfiguration config, IMemoryCache cache, CryptomonDbContext dbContext)
+        public AccountService(ILogger<AccountService> logger, IConfiguration config, IMemoryCache cache, CryptomonDbContext dbContext, IMapper mapper)
         {
             _logger = logger;
             _config = config;
             _cache = cache;
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
         public async Task Register(AccountDto newAccount)
@@ -36,9 +39,11 @@ namespace CryptomonServer.Services
         public async Task<AccountDto> GetAccount(string address)
         {
             var entity = await _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, address)).FirstOrDefaultAsync();
-            return entity != null ?
-                new AccountDto() { Address = entity.Address, Username = entity.Username, RecoveryEmail = entity.RecoveryMail }
-                : new AccountDto();
+            if (entity != null)
+            {
+                return _mapper.Map<AccountDto>(entity);
+            }
+            return new AccountDto();
         }
     }
 }
