@@ -35,6 +35,8 @@ namespace CryptomonServer.Controllers
         }
 
         [HttpGet()]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> GetLand()
         {
             try
@@ -51,6 +53,8 @@ namespace CryptomonServer.Controllers
         }
 
         [HttpPost("AddPlant")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> AddPlant([FromBody] PlantingDto plan)
         {
             try
@@ -60,12 +64,14 @@ namespace CryptomonServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "GetLand");
+                _logger.LogError(ex, "AddPlant");
                 return BadRequest(ex);
             }
         }
 
         [HttpPost("HarvestPlant")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> HarvestPlant([FromBody] PlantingDto plan)
         {
             try
@@ -81,6 +87,8 @@ namespace CryptomonServer.Controllers
         }
 
         [HttpPost("BuyLevel")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> BuyLevel()
         {
             try
@@ -96,6 +104,8 @@ namespace CryptomonServer.Controllers
         }
 
         [HttpGet("GetLevelPrice")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult GetLevelPrice()
         {
             try
@@ -105,7 +115,7 @@ namespace CryptomonServer.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "BuyLevel");
+                _logger.LogError(ex, "GetLevelPrice");
                 return BadRequest(ex);
             }
         }
