@@ -46,6 +46,11 @@ namespace CryptomonServer.Services
                 throw new Exception("Square didn't exist");
             }
 
+            if(fruit.SeedPrice > land.Account.CoinBalance)
+            {
+                throw new Exception("Insufficient amount.");
+            }
+
             // remove seed price to account balance
             land.Account.CoinBalance -= fruit.SeedPrice;
             if (actualPlant != null)
