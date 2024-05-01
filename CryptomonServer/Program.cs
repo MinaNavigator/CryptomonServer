@@ -1,11 +1,15 @@
 using CryptomonServer.Orm;
 using CryptomonServer.Services;
 using CryptomonServer.Services.Interfaces;
+using GraphQL.Client.Abstractions;
+using GraphQL.Client.Http;
+using GraphQL.Client.Serializer.SystemTextJson;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Npgsql;
 using System.Text;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -20,6 +24,8 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddMemoryCache();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddLogging();
+
+builder.Services.AddScoped<IGraphQLClient>(s => new GraphQLHttpClient(builder.Configuration["NetworkGraph"], new SystemTextJsonSerializer()));
 
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<ICryptomonService, CryptomonService>();

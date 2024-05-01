@@ -22,8 +22,9 @@ namespace CryptomonServer.Controllers
         private readonly ICryptomonService _cryptomonService;
         private readonly IAccountService _accountService;
         private readonly ILandService _landService;
+        private readonly IProtokitService _protokitService;
 
-        public LandController(ILogger<LandController> logger, IConfiguration config, IMemoryCache cache, IMonsterService monsterService, ICryptomonService cryptomonService, IAccountService accountService, ILandService landService)
+        public LandController(ILogger<LandController> logger, IConfiguration config, IMemoryCache cache, IMonsterService monsterService, ICryptomonService cryptomonService, IAccountService accountService, ILandService landService, IProtokitService protokitService)
         {
             _logger = logger;
             _config = config;
@@ -31,7 +32,7 @@ namespace CryptomonServer.Controllers
             _accountService = accountService;
             _monsterService = monsterService;
             _landService = landService;
-
+            _protokitService = protokitService;
         }
 
         [HttpGet()]
@@ -47,6 +48,25 @@ namespace CryptomonServer.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "GetLand");
+                return BadRequest(ex);
+            }
+
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetDeposits")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> GetDeposits()
+        {
+            try
+            {
+                await _protokitService.GetDeposits();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "GetDeposits");
                 return BadRequest(ex);
             }
 

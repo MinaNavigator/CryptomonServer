@@ -2,6 +2,8 @@
 using CryptomonServer.Dtos;
 using CryptomonServer.Orm;
 using CryptomonServer.Services.Interfaces;
+using GraphQL;
+using GraphQL.Client.Abstractions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -14,34 +16,36 @@ namespace CryptomonServer.Services
         private readonly ILogger<ProtokitService> _logger;
         private readonly IMapper _mapper;
         private readonly CryptomonDbContext _dbContext;
+        private readonly IGraphQLClient _client;
 
-        public ProtokitService(ILogger<ProtokitService> logger, IConfiguration config, IMemoryCache cache, CryptomonDbContext dbContext, IMapper mapper)
+        public ProtokitService(ILogger<ProtokitService> logger, IGraphQLClient client, IConfiguration config, IMemoryCache cache, CryptomonDbContext dbContext, IMapper mapper)
         {
             _logger = logger;
             _config = config;
             _cache = cache;
             _dbContext = dbContext;
             _mapper = mapper;
+            _client = client;
         }
 
         public async Task GetDeposits()
         {
-            // todo read from protokit api deposit
+            var address = _config["ContractAddress"];
+            var query = new GraphQLRequest
+            {
+                Query = @"
+                    query EventQuery($contract: String!) {
+                      events(input: {address: $contract}) {
+                        eventData {
+                          data
+                        }
+                      }
+                    }",
+                Variables = new { contract = address }
+            };
+            var response = await _client.SendQueryAsync<DepositEvents>(query);
 
-            HttpClient client = new HttpClient();
-
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "url to define");
-
-            request.Headers.Add("Accept", "application/json");
-            request.Headers.Add("Authorization", $"Bearer {_config["ApiKey"]}");
-
-            HttpResponseMessage response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            string responseBody = await response.Content.ReadAsStringAsync();
-
-            var action = new GameAction() { ActionType = ActionType.DepositMina };
-            
-
+            var account = response.Data.Events.SelectMany(x => x.EventData).Select(x => x.Account).ToList();
         }
 
         public async Task SaveActions()
