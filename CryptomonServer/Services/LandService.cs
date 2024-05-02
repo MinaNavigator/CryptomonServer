@@ -81,10 +81,10 @@ namespace CryptomonServer.Services
                 var account = _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, address)).Single();
                 land = new Land() { AccountId = account.AccountId, Level = 0 };
                 _dbContext.Lands.Add(land);
-                // first plantation offers
-                Planting plant = new Planting() { FruitId = 1, Square = 0 };
-                Planting plant2 = new Planting() { FruitId = 1, Square = 1 };
-                Planting plant3 = new Planting() { FruitId = 1, Square = 2 };
+                // first plantation offersdy
+                Planting plant = new Planting() { FruitId = 1, Square = 0, PlantingDate = DateTime.UtcNow.AddDays(-1) };
+                Planting plant2 = new Planting() { FruitId = 1, Square = 1, PlantingDate = DateTime.UtcNow.AddDays(-1) };
+                Planting plant3 = new Planting() { FruitId = 1, Square = 2, PlantingDate = DateTime.UtcNow.AddDays(-1) };
                 land.Plantings.Add(plant);
                 land.Plantings.Add(plant2);
                 land.Plantings.Add(plant3);
