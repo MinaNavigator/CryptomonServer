@@ -45,7 +45,34 @@ namespace CryptomonServer.Services
             };
             var response = await _client.SendQueryAsync<DepositEvents>(query);
 
-            var account = response.Data.Events.SelectMany(x => x.EventData).Select(x => x.Account).ToList();
+            var eventData = response.Data.Events.SelectMany(x => x.EventData).ToList();
+
+            using var transaction = _dbContext.Database.BeginTransaction();
+            try
+            {
+                foreach (var data in eventData)
+                {
+                    // todo group by account
+                    var account = _dbContext.Accounts.Where(x => EF.Functions.ILike(x.Address, data.Account)).FirstOrDefault();
+                    if (account != null)
+                    {
+                        bool alreadyExist = _dbContext.Deposits.Any(x => x.DepositId == data.Index);
+                        if (!alreadyExist)
+                        {
+                           // var newDeposit =new Deposit() { }
+                        }
+                    }
+                }
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+           
+
+            
         }
 
         public async Task SaveActions()

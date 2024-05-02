@@ -12,9 +12,9 @@ namespace CryptomonServer.Orm
         public long PlantingId { get; set; }
         public int LandId { get; set; }
         public int Square { get; set; }
-        public int FruitId { get; set; }
+        public int? FruitId { get; set; }
         public DateTime PlantingDate { get; set; }
         public virtual Land Land { get; set; }
-        public virtual Fruit Fruit { get; set; }
+        public virtual Fruit? Fruit { get; set; }
     }
 }

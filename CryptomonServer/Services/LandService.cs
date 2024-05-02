@@ -29,7 +29,7 @@ namespace CryptomonServer.Services
         {
             var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x => x.Account).Single();
             var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).FirstOrDefault();
-            if (actualPlant?.FruitId > 0)
+            if (actualPlant?.FruitId is not null)
             {
                 throw new Exception("Harvest before plant.");
             }
@@ -46,7 +46,7 @@ namespace CryptomonServer.Services
                 throw new Exception("Square didn't exist");
             }
 
-            if(fruit.SeedPrice > land.Account.CoinBalance)
+            if (fruit.SeedPrice > land.Account.CoinBalance)
             {
                 throw new Exception("Insufficient amount.");
             }
@@ -98,7 +98,7 @@ namespace CryptomonServer.Services
         {
             var land = _dbContext.Lands.Where(x => EF.Functions.ILike(x.Account.Address, address)).Include(x => x.Account).Single();
             var actualPlant = _dbContext.Plantings.Where(x => x.LandId == land.LandId && x.Square == plant.Square).Include(x => x.Fruit).FirstOrDefault();
-            if (actualPlant?.FruitId == 0)
+            if (actualPlant?.FruitId is null)
             {
                 throw new Exception("Nothing to harvest.");
             }
@@ -106,7 +106,7 @@ namespace CryptomonServer.Services
             // add plant price to account balance
             land.Account.CoinBalance += actualPlant.Fruit.PlantPrice;
 
-            actualPlant.FruitId = 0;
+            actualPlant.FruitId = null;
 
             await _dbContext.SaveChangesAsync();
 
