@@ -59,20 +59,26 @@ namespace CryptomonServer.Services
                         bool alreadyExist = _dbContext.Deposits.Any(x => x.DepositId == data.Index);
                         if (!alreadyExist)
                         {
-                           // var newDeposit =new Deposit() { }
+                            var newDeposit = new Deposit(data.Index, account.AccountId, data.Amount, DateTime.UtcNow);
+
+                            var amountGame = data.AmountDecimal * 2;
+                            account.CoinBalance += amountGame;
+                            _dbContext.Deposits.Add(newDeposit);
+
+                            await _dbContext.SaveChangesAsync();
                         }
                     }
                 }
-                transaction.Commit();
+                await transaction.CommitAsync();
             }
             catch (Exception)
             {
 
                 throw;
             }
-           
 
-            
+
+
         }
 
         public async Task SaveActions()

@@ -42,5 +42,10 @@ namespace CryptomonServer.Dtos
         {
             get { return UInt64.Parse(Data[4]); }
         }
+
+        public decimal AmountDecimal
+        {
+            get { return (decimal)(UInt64.Parse(Data[4]) / Math.Pow(10, 9)); }
+        }
     }
 }
