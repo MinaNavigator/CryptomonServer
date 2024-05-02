@@ -14,15 +14,48 @@
             margin-top: 10px;
             font-size: 20px;
         }
+
+        @font-face {
+            font-family: 'ABC Monument Grotesk';
+            font-style: normal;
+            font-weight: normal;
+            src: url('/assets/fonts/ABCMonumentGrotesk-Regular.woff2') format('woff2'), url('/assets/fonts/ABCMonumentGrotesk-Regular.woff') format('woff');
+        }
+
+        @font-face {
+            font-family: 'ABC Monument Grotesk Light';
+            font-style: normal;
+            src: url('/assets/fonts/ABCMonumentGrotesk-Light.woff2') format('woff2'), url('/assets/fonts/ABCMonumentGrotesk-Light.woff') format('woff');
+        }
+
+        @font-face {
+            font-family: 'ABC Monument Grotesk Bold';
+            font-style: normal;
+            font-weight: bold;
+            src: url('/assets/fonts/ABCMonumentGrotesk-Bold.woff2') format('woff2'), url('/assets/fonts/ABCMonumentGrotesk-Bold.woff') format('woff');
+        }
+
+        html {
+            background-color: lightblue;
+            background-size: cover;
+        }
+
+        body {
+            font-family: 'ABC Monument Grotesk';
+            background: url('/assets/hash-pattern.png');
+            background-repeat: repeat;
+            min-height: 100vh;
+        }
     </style>
 </head>
 <body>
     <header>
         <div>To play you need <a href="https://www.aurowallet.com/" target="_blank">Auro Wallet</a> and be connected on devnet to sign connection message</div>
         <div>Click the hole to plant, harvest once the plant has fully grown.</div>
+        <div><a href="https://cryptomon-deposit.vercel.app/" target="_blank">You can buy in game token in Mina here on Devnet</a></div>
     </header>
-
     <div id="unity-container" class="unity-desktop">
+
         <canvas id="unity-canvas" width=960 height=540></canvas>
         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
